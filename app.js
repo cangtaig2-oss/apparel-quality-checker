@@ -642,7 +642,7 @@ $("diagnosisForm").addEventListener("submit", (event) => {
   renderResult(diagnose(getFormData()));
 });
 
-$("tagImage").addEventListener("change", (event) => {
+$("tagImage").addEventListener("change", async (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
   const image = document.createElement("img");
@@ -650,6 +650,7 @@ $("tagImage").addEventListener("change", (event) => {
   image.src = URL.createObjectURL(file);
   $("imagePreview").textContent = "";
   $("imagePreview").appendChild(image);
+  await readTagImage(file);
 });
 
 $("sampleButton").addEventListener("click", () => {
@@ -694,4 +695,44 @@ if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./service-worker.js").catch(() => {});
   });
+}
+
+async function readTagImage(file) {
+  if (!window.Tesseract) {
+    $("ocrStatus").textContent = "文字読み取りを読み込めませんでした。ネット接続を確認してください。";
+    return;
+  }
+
+  $("ocrStatus").textContent = "文字を読み取り中です。少し待ってください。";
+
+  try {
+    const result = await Tesseract.recognize(file, "jpn+eng", {
+      logger: (message) => {
+        if (message.status === "recognizing text") {
+          const percent = Math.round((message.progress || 0) * 100);
+          $("ocrStatus").textContent = `文字を読み取り中です ${percent}%`;
+        }
+      },
+    });
+    const text = cleanupOcrText(result.data.text);
+
+    if (!text) {
+      $("ocrStatus").textContent = "文字を読み取れませんでした。明るく、タグ全体が入るように撮り直してください。";
+      return;
+    }
+
+    $("tagText").value = text;
+    $("ocrStatus").textContent = "読み取りました。間違いがあれば下の文字を直してください。";
+  } catch {
+    $("ocrStatus").textContent = "読み取りに失敗しました。写真を撮り直すか、タグの文字を入力してください。";
+  }
+}
+
+function cleanupOcrText(text) {
+  return text
+    .replace(/[|｜]/g, " ")
+    .replace(/[％﹪]/g, "%")
+    .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }

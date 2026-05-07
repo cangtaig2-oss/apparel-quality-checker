@@ -42,7 +42,7 @@
             <span>タグ画像</span>
             <input id="tagImage" type="file" accept="image/*" capture="environment" />
             <strong>タグを撮る / 選ぶ</strong>
-            <small>スマホではカメラが開きます。撮影後、読み取れた内容を下に入力してください。</small>
+            <small id="ocrStatus">スマホではカメラが開きます。写真から文字を読み取ります。</small>
           </label>
           <div id="imagePreview" class="image-preview" aria-live="polite">プレビュー</div>
 
@@ -214,6 +214,7 @@
       </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>
