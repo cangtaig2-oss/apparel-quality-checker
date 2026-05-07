@@ -227,6 +227,12 @@ textarea:focus {
   display: none;
 }
 
+.upload-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
 .upload-box strong {
   display: inline-flex;
   align-items: center;
@@ -235,6 +241,12 @@ textarea:focus {
   border-radius: 6px;
   background: var(--accent);
   color: #fff;
+}
+
+.upload-box strong[data-upload="library"] {
+  border: 1px solid rgba(31, 122, 102, 0.34);
+  background: #fff;
+  color: var(--accent-dark);
 }
 
 .upload-box small {

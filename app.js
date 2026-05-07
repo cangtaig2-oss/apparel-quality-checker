@@ -643,7 +643,17 @@ $("diagnosisForm").addEventListener("submit", (event) => {
   renderResult(diagnose(getFormData()));
 });
 
-$("tagImage").addEventListener("change", async (event) => {
+document.querySelector('[data-upload="camera"]').addEventListener("click", (event) => {
+  event.preventDefault();
+  $("tagCamera").click();
+});
+
+document.querySelector('[data-upload="library"]').addEventListener("click", (event) => {
+  event.preventDefault();
+  $("tagImage").click();
+});
+
+async function handleTagImageChange(event) {
   const file = event.target.files?.[0];
   if (!file) return;
   selectedTagFile = file;
@@ -654,7 +664,10 @@ $("tagImage").addEventListener("change", async (event) => {
   $("imagePreview").textContent = "";
   $("imagePreview").appendChild(image);
   await readTagImage(file);
-});
+}
+
+$("tagCamera").addEventListener("change", handleTagImageChange);
+$("tagImage").addEventListener("change", handleTagImageChange);
 
 $("retryOcrButton").addEventListener("click", async () => {
   if (!selectedTagFile) return;
