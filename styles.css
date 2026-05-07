@@ -233,17 +233,20 @@ textarea:focus {
   gap: 8px;
 }
 
-.upload-box strong {
+.upload-box .upload-actions button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 42px;
+  border: 0;
   border-radius: 6px;
   background: var(--accent);
   color: #fff;
+  cursor: pointer;
+  font-weight: 800;
 }
 
-.upload-box strong[data-upload="library"] {
+.upload-box .upload-actions button[data-upload="library"] {
   border: 1px solid rgba(31, 122, 102, 0.34);
   background: #fff;
   color: var(--accent-dark);

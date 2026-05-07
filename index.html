@@ -38,16 +38,16 @@
         </div>
 
         <form id="diagnosisForm" class="form-grid">
-          <label class="upload-box">
+          <div class="upload-box">
             <span>タグ画像</span>
             <input id="tagCamera" type="file" accept="image/*" capture="environment" />
             <input id="tagImage" type="file" accept="image/*" />
             <div class="upload-actions">
-              <strong data-upload="camera">写真を撮る</strong>
-              <strong data-upload="library">写真フォルダから選ぶ</strong>
+              <button data-upload="camera" type="button">写真を撮る</button>
+              <button data-upload="library" type="button">写真フォルダから選ぶ</button>
             </div>
             <small id="ocrStatus">スマホではカメラが開きます。写真から文字を読み取ります。</small>
-          </label>
+          </div>
           <div id="imagePreview" class="image-preview" aria-live="polite">プレビュー</div>
 
           <label class="field full">
