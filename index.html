@@ -60,6 +60,45 @@
           </div>
           <button id="retryOcrButton" class="secondary-button full" type="button" disabled>写真をもう一度読み取る</button>
 
+          <fieldset class="full care-box">
+            <legend>洗濯表示</legend>
+            <label>
+              <span>家庭洗濯</span>
+              <select id="careHomeWash">
+                <option value="unknown">不明</option>
+                <option value="machine">洗濯機OK</option>
+                <option value="hand">手洗いOK</option>
+                <option value="forbidden">家庭洗濯不可</option>
+              </select>
+            </label>
+            <label>
+              <span>乾燥機</span>
+              <select id="careTumbleDry">
+                <option value="unknown">不明</option>
+                <option value="allowed">タンブル乾燥OK</option>
+                <option value="forbidden">タンブル乾燥不可</option>
+              </select>
+            </label>
+            <label>
+              <span>アイロン</span>
+              <select id="careIron">
+                <option value="unknown">不明</option>
+                <option value="allowed">アイロンOK</option>
+                <option value="low">低温のみ</option>
+                <option value="forbidden">アイロン不可</option>
+              </select>
+            </label>
+            <label>
+              <span>クリーニング</span>
+              <select id="careCleaning">
+                <option value="unknown">不明</option>
+                <option value="dry">ドライOK</option>
+                <option value="wet">ウェットOK</option>
+                <option value="forbidden">クリーニング不可</option>
+              </select>
+            </label>
+          </fieldset>
+
           <label class="field">
             <span>商品カテゴリ</span>
             <select id="category">

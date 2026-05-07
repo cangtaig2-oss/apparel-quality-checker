@@ -389,6 +389,35 @@ textarea:focus {
   font-weight: 700;
 }
 
+.care-box {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.care-box legend {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.care-box label {
+  display: grid;
+  gap: 8px;
+}
+
+.care-box span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
 .empty-state {
   min-height: 360px;
   display: grid;
@@ -547,7 +576,8 @@ ul {
   .form-grid,
   .score-hero,
   .score-grid,
-  .result-columns {
+  .result-columns,
+  .care-box {
     grid-template-columns: 1fr;
   }
 

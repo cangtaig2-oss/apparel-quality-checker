@@ -243,6 +243,36 @@ function parseCareLabel(text) {
   };
 }
 
+function buildCareLabel(data) {
+  const careLabel = parseCareLabel(data.tagText);
+
+  if (data.careHomeWash === "machine") {
+    careLabel.homeWash = true;
+    careLabel.handWash = false;
+    careLabel.homeWashForbidden = false;
+  }
+  if (data.careHomeWash === "hand") {
+    careLabel.homeWash = false;
+    careLabel.handWash = true;
+    careLabel.homeWashForbidden = false;
+  }
+  if (data.careHomeWash === "forbidden") {
+    careLabel.homeWash = false;
+    careLabel.handWash = false;
+    careLabel.homeWashForbidden = true;
+  }
+
+  if (data.careTumbleDry === "allowed") careLabel.tumbleDryForbidden = false;
+  if (data.careTumbleDry === "forbidden") careLabel.tumbleDryForbidden = true;
+
+  if (data.careIron === "forbidden") careLabel.ironForbidden = true;
+  if (data.careIron === "allowed" || data.careIron === "low") careLabel.ironForbidden = false;
+
+  if (data.careCleaning === "dry") careLabel.dryOnly = data.careHomeWash === "forbidden";
+
+  return careLabel;
+}
+
 function clamp(value, min = 0, max = 100) {
   return Math.max(min, Math.min(max, Math.round(value)));
 }
@@ -257,6 +287,10 @@ function getFormData() {
     tagText: $("tagText").value,
     category: $("category").value,
     price: Number($("price").value || 0),
+    careHomeWash: $("careHomeWash").value,
+    careTumbleDry: $("careTumbleDry").value,
+    careIron: $("careIron").value,
+    careCleaning: $("careCleaning").value,
     useCase: $("useCase").value,
     frequency: $("frequency").value,
     lifespan: $("lifespan").value,
@@ -273,7 +307,7 @@ function getFormData() {
 
 function diagnose(data) {
   const materials = parseMaterials(data.tagText);
-  const careLabel = parseCareLabel(data.tagText);
+  const careLabel = buildCareLabel(data);
   const good = [];
   const warnings = [];
   const goodFor = [];
@@ -736,6 +770,10 @@ $("sampleButton").addEventListener("click", () => {
   $("tagText").value = "表地 レーヨン70% ポリエステル30%\n裏地 ポリエステル100%\n家庭洗濯不可 / タンブル乾燥不可 / ドライクリーニング可";
   $("category").value = "ワンピース";
   $("price").value = "9800";
+  $("careHomeWash").value = "forbidden";
+  $("careTumbleDry").value = "forbidden";
+  $("careIron").value = "low";
+  $("careCleaning").value = "dry";
   $("useCase").value = "普段着";
   $("frequency").value = "週2〜3回";
   $("lifespan").value = "2〜3年";
