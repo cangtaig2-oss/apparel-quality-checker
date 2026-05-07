@@ -233,7 +233,7 @@ textarea:focus {
   gap: 8px;
 }
 
-.upload-box .upload-actions button {
+.upload-box .upload-actions label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -246,7 +246,7 @@ textarea:focus {
   font-weight: 800;
 }
 
-.upload-box .upload-actions button[data-upload="library"] {
+.upload-box .upload-actions label[data-upload="library"] {
   border: 1px solid rgba(31, 122, 102, 0.34);
   background: #fff;
   color: var(--accent-dark);

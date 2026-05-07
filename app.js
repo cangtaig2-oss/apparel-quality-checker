@@ -665,16 +665,6 @@ $("diagnosisForm").addEventListener("submit", (event) => {
   renderResult(diagnose(getFormData()));
 });
 
-document.querySelector('[data-upload="camera"]').addEventListener("click", (event) => {
-  event.preventDefault();
-  $("tagCamera").click();
-});
-
-document.querySelector('[data-upload="library"]').addEventListener("click", (event) => {
-  event.preventDefault();
-  $("tagImage").click();
-});
-
 async function handleTagImageChange(event) {
   const file = event.target.files?.[0];
   if (!file) return;
