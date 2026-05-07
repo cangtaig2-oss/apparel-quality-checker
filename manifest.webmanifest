@@ -1,0 +1,18 @@
+{
+  "name": "買っていい服診断",
+  "short_name": "服診断",
+  "description": "素材タグ・洗濯表示・価格・用途から、服を買っていいか診断するアプリです。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f8f5",
+  "theme_color": "#1f7a66",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

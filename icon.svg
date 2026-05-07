@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="買っていい服診断">
+  <rect width="512" height="512" rx="104" fill="#1f7a66"/>
+  <path fill="#f7f8f5" d="M164 118c18-22 47-36 92-36s74 14 92 36l58 42-39 74-41-20v174c0 21-13 34-34 34h-72c-21 0-34-13-34-34V214l-41 20-39-74 58-42Z"/>
+  <path fill="#1f7a66" d="M217 112c8 22 21 33 39 33s31-11 39-33c-11-5-24-8-39-8s-28 3-39 8Z"/>
+  <path fill="none" stroke="#1f7a66" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" d="m221 278 29 29 55-68"/>
+</svg>

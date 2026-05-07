@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f7a66" />
+    <meta
+      name="description"
+      content="素材タグ・洗濯表示・価格・用途から、服を買っていいか診断するアプリです。"
+    />
+    <title>買っていい服診断</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icon.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Apparel Quality Checker</p>
+        <h1>買っていい服診断</h1>
+        <p class="lead">素材タグから、買い・見送り・家で洗えるかを診断します。</p>
+      </div>
+      <div class="header-actions">
+        <button id="shareButton" class="ghost-button" type="button">友達に共有</button>
+        <button id="sampleButton" class="ghost-button" type="button">サンプル入力</button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="input-panel" aria-labelledby="inputTitle">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Step 1</p>
+            <h2 id="inputTitle">タグと商品情報</h2>
+          </div>
+          <span class="status-pill">MVP</span>
+        </div>
+
+        <form id="diagnosisForm" class="form-grid">
+          <label class="upload-box">
+            <span>タグ画像</span>
+            <input id="tagImage" type="file" accept="image/*" capture="environment" />
+            <strong>タグを撮る / 選ぶ</strong>
+            <small>スマホではカメラが開きます。撮影後、読み取れた内容を下に入力してください。</small>
+          </label>
+          <div id="imagePreview" class="image-preview" aria-live="polite">プレビュー</div>
+
+          <label class="field full">
+            <span>タグ読み取りテキスト</span>
+            <textarea id="tagText" rows="7" placeholder="例：表地 レーヨン70% ポリエステル30%&#10;裏地 ポリエステル100%&#10;家庭洗濯不可 / タンブル乾燥不可 / ドライクリーニング可"></textarea>
+          </label>
+
+          <label class="field">
+            <span>商品カテゴリ</span>
+            <select id="category">
+              <option>Tシャツ</option>
+              <option>ニット</option>
+              <option>パーカー・スウェット</option>
+              <option>パンツ</option>
+              <option>スカート</option>
+              <option>ワンピース</option>
+              <option>ブラウス</option>
+              <option>ジャケット</option>
+              <option>コート</option>
+              <option>合皮アイテム</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>購入予定価格</span>
+            <input id="price" type="number" min="0" step="100" placeholder="9800" />
+          </label>
+
+          <label class="field">
+            <span>主な用途</span>
+            <select id="useCase">
+              <option>普段着</option>
+              <option>仕事</option>
+              <option>旅行</option>
+              <option>フォーマル</option>
+              <option>デート</option>
+              <option>推し活</option>
+              <option>育児</option>
+              <option>部屋着</option>
+              <option>運動</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>着用頻度</span>
+            <select id="frequency">
+              <option>毎日</option>
+              <option>週2〜3回</option>
+              <option>週1回</option>
+              <option>月数回</option>
+              <option>年数回</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>何年着たいか</span>
+            <select id="lifespan">
+              <option>1シーズン</option>
+              <option>1年</option>
+              <option>2〜3年</option>
+              <option>5年以上</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>家で洗いたいか</span>
+            <select id="homeWashNeed">
+              <option>必須</option>
+              <option>できれば</option>
+              <option>どちらでも</option>
+              <option>クリーニング可</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>乾燥機</span>
+            <select id="dryerUse">
+              <option>使わない</option>
+              <option>たまに</option>
+              <option>よく使う</option>
+            </select>
+          </label>
+
+          <fieldset class="full preference-box">
+            <legend>苦手なこと</legend>
+            <label><input type="checkbox" name="sensitivity" value="毛玉" checked /> 毛玉</label>
+            <label><input type="checkbox" name="sensitivity" value="シワ" /> シワ</label>
+            <label><input type="checkbox" name="sensitivity" value="縮み" checked /> 縮み</label>
+            <label><input type="checkbox" name="sensitivity" value="透け" /> 透け</label>
+            <label><input type="checkbox" name="sensitivity" value="静電気" /> 静電気</label>
+            <label><input type="checkbox" name="sensitivity" value="チクチク" /> チクチク</label>
+          </fieldset>
+
+          <fieldset class="full preference-box">
+            <legend>構造・副資材</legend>
+            <label><input type="checkbox" id="hasLining" /> 裏地あり</label>
+            <label><input type="checkbox" id="hasInterlining" /> 芯地あり</label>
+            <label><input type="checkbox" id="hasDecoration" /> 刺繍・ビーズ・重いプリントあり</label>
+            <label><input type="checkbox" id="zipperConcern" /> ファスナーの滑りが悪い</label>
+            <label><input type="checkbox" id="sewingConcern" /> 縫い目・糸始末に不安</label>
+          </fieldset>
+
+          <button class="primary-button full" type="submit">診断する</button>
+        </form>
+      </section>
+
+      <section class="result-panel" aria-labelledby="resultTitle">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Step 2</p>
+            <h2 id="resultTitle">診断結果</h2>
+          </div>
+          <span id="resultBadge" class="result-badge waiting">未診断</span>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+          <strong>タグ情報を入れて診断してください。</strong>
+          <p>素材名と混率は「レーヨン70% ポリエステル30%」のように書けば読み取れます。</p>
+        </div>
+
+        <div id="resultContent" class="result-content hidden">
+          <div class="score-hero">
+            <div>
+              <span>総合スコア</span>
+              <strong id="totalScore">0</strong>
+            </div>
+            <p id="oneLineSummary"></p>
+          </div>
+
+          <div class="score-grid">
+            <div><span>素材</span><meter id="materialScore" min="0" max="100"></meter><b></b></div>
+            <div><span>耐久性</span><meter id="durabilityScore" min="0" max="100"></meter><b></b></div>
+            <div><span>ケア</span><meter id="careScore" min="0" max="100"></meter><b></b></div>
+            <div><span>価格妥当性</span><meter id="priceScore" min="0" max="100"></meter><b></b></div>
+            <div><span>用途適合</span><meter id="useScore" min="0" max="100"></meter><b></b></div>
+          </div>
+
+          <div class="home-wash-box">
+            <span>家洗い判定</span>
+            <strong id="homeWashTitle"></strong>
+            <p id="homeWashText"></p>
+          </div>
+
+          <div class="result-columns">
+            <article>
+              <h3>良い点</h3>
+              <ul id="goodPoints"></ul>
+            </article>
+            <article>
+              <h3>注意点</h3>
+              <ul id="warnings"></ul>
+            </article>
+            <article>
+              <h3>買っていい人</h3>
+              <ul id="goodFor"></ul>
+            </article>
+            <article>
+              <h3>避けた方がいい人</h3>
+              <ul id="avoidFor"></ul>
+            </article>
+          </div>
+
+          <article class="checklist">
+            <h3>購入前チェック</h3>
+            <ul id="checklist"></ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
