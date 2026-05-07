@@ -344,6 +344,51 @@ textarea:focus {
   opacity: 0.62;
 }
 
+.material-preview {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.material-preview span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.material-preview p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.material-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.material-tags button {
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid rgba(31, 122, 102, 0.28);
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--accent-dark);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.ocr-raw-details summary {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
 .empty-state {
   min-height: 360px;
   display: grid;

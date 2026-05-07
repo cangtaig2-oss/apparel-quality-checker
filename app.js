@@ -644,6 +644,51 @@ function renderResult(result) {
   renderList("checklist", result.checklist);
 }
 
+function renderMaterialPreview(materials, rawText = "") {
+  const preview = $("materialPreview");
+  const materialText = materials.map((material) => `${material.label}${material.percentage}%`).join(" / ");
+
+  if (!materials.length) {
+    preview.innerHTML = `
+      <span>素材抽出</span>
+      <p>素材名と％を自動抽出できませんでした。タグ読み取りテキスト欄に「ポリエステル54% レーヨン43% ポリウレタン3%」のように入れてください。</p>
+      ${rawText ? `<details class="ocr-raw-details"><summary>OCR全文を見る</summary><p>${escapeHtml(rawText)}</p></details>` : ""}
+    `;
+    return;
+  }
+
+  preview.innerHTML = `
+    <span>素材抽出</span>
+    <div class="material-tags">
+      ${materials.map((material) => `<button type="button">${escapeHtml(material.label)} ${material.percentage}%</button>`).join("")}
+    </div>
+    <p>診断ではこの素材情報を優先して使います。違っていたら、上のテキスト欄を直してください。</p>
+    ${rawText ? `<details class="ocr-raw-details"><summary>OCR全文を見る</summary><p>${escapeHtml(rawText)}</p></details>` : ""}
+  `;
+
+  preview.querySelectorAll(".material-tags button").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("tagText").focus();
+    });
+  });
+
+  if (materialText) {
+    const current = $("tagText").value;
+    const normalizedCurrent = normalizeText(current).replace(/\s+/g, "");
+    const normalizedMaterialText = normalizeText(materialText).replace(/\s+/g, "");
+    if (!normalizedCurrent.includes(normalizedMaterialText)) {
+      $("tagText").value = `${materialText}\n\n${current}`.trim();
+    }
+  }
+}
+
+function escapeHtml(value) {
+  return value.replace(/[&<>"']/g, (char) => {
+    const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+    return map[char];
+  });
+}
+
 function setMeter(id, value) {
   const meter = $(id);
   meter.value = value;
@@ -662,6 +707,7 @@ function renderList(id, items) {
 
 $("diagnosisForm").addEventListener("submit", (event) => {
   event.preventDefault();
+  renderMaterialPreview(parseMaterials($("tagText").value), $("tagText").value);
   renderResult(diagnose(getFormData()));
 });
 
@@ -766,7 +812,11 @@ async function readTagImage(file) {
     }
 
     $("tagText").value = text;
-    $("ocrStatus").textContent = "読み取りました。間違いがあれば下の文字を直してください。";
+    const materials = parseMaterials(text);
+    renderMaterialPreview(materials, text);
+    $("ocrStatus").textContent = materials.length
+      ? `素材を抽出しました: ${materials.map((material) => `${material.label}${material.percentage}%`).join(" / ")}`
+      : "読み取りましたが、素材と％を自動抽出できませんでした。テキスト欄を少し直してください。";
   } catch (error) {
     $("ocrStatus").textContent = `読み取りに失敗しました。写真を明るく撮り直してください。${error?.message ? ` (${error.message.slice(0, 48)})` : ""}`;
   } finally {
