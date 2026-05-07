@@ -160,6 +160,7 @@ const categoryChecks = {
 
 const $ = (id) => document.getElementById(id);
 const shareText = "服の素材タグから、買っていいか・家で洗えるかを診断できるアプリです。";
+let selectedTagFile = null;
 
 function normalizeText(text) {
   return text
@@ -645,12 +646,19 @@ $("diagnosisForm").addEventListener("submit", (event) => {
 $("tagImage").addEventListener("change", async (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
+  selectedTagFile = file;
+  $("retryOcrButton").disabled = false;
   const image = document.createElement("img");
   image.alt = "タグ画像プレビュー";
   image.src = URL.createObjectURL(file);
   $("imagePreview").textContent = "";
   $("imagePreview").appendChild(image);
   await readTagImage(file);
+});
+
+$("retryOcrButton").addEventListener("click", async () => {
+  if (!selectedTagFile) return;
+  await readTagImage(selectedTagFile);
 });
 
 $("sampleButton").addEventListener("click", () => {
@@ -704,10 +712,21 @@ async function readTagImage(file) {
   }
 
   $("ocrStatus").textContent = "文字を読み取り中です。少し待ってください。";
+  $("retryOcrButton").disabled = true;
 
   try {
-    const result = await Tesseract.recognize(file, "jpn+eng", {
+    const preparedImage = await prepareImageForOcr(file);
+    const result = await Tesseract.recognize(preparedImage, "jpn+eng", {
+      workerPath: "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js",
+      corePath: "https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core.wasm.js",
+      langPath: "https://tessdata.projectnaptha.com/4.0.0",
       logger: (message) => {
+        if (message.status === "loading tesseract core") {
+          $("ocrStatus").textContent = "文字読み取りの準備中です。";
+        }
+        if (message.status === "loading language traineddata") {
+          $("ocrStatus").textContent = "日本語読み取りデータを読み込み中です。";
+        }
         if (message.status === "recognizing text") {
           const percent = Math.round((message.progress || 0) * 100);
           $("ocrStatus").textContent = `文字を読み取り中です ${percent}%`;
@@ -723,9 +742,56 @@ async function readTagImage(file) {
 
     $("tagText").value = text;
     $("ocrStatus").textContent = "読み取りました。間違いがあれば下の文字を直してください。";
-  } catch {
-    $("ocrStatus").textContent = "読み取りに失敗しました。写真を撮り直すか、タグの文字を入力してください。";
+  } catch (error) {
+    $("ocrStatus").textContent = `読み取りに失敗しました。写真を明るく撮り直してください。${error?.message ? ` (${error.message.slice(0, 48)})` : ""}`;
+  } finally {
+    $("retryOcrButton").disabled = !selectedTagFile;
   }
+}
+
+async function prepareImageForOcr(file) {
+  const image = await loadImage(file);
+  const maxSide = 1800;
+  const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+  const width = Math.max(1, Math.round(image.naturalWidth * scale));
+  const height = Math.max(1, Math.round(image.naturalHeight * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, width, height);
+  context.drawImage(image, 0, 0, width, height);
+
+  const imageData = context.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+    const boosted = gray > 175 ? 255 : gray < 95 ? 0 : gray * 1.12;
+    data[i] = boosted;
+    data[i + 1] = boosted;
+    data[i + 2] = boosted;
+  }
+  context.putImageData(imageData, 0, 0);
+
+  return canvas.toDataURL("image/jpeg", 0.92);
+}
+
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const url = URL.createObjectURL(file);
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("画像形式を読めません"));
+    };
+    image.src = url;
+  });
 }
 
 function cleanupOcrText(text) {
