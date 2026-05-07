@@ -1,4 +1,4 @@
-const CACHE_NAME = "apparel-quality-checker-v4";
+const CACHE_NAME = "apparel-quality-checker-v5";
 const ASSETS = [
   "./",
   "./index.html",
